@@ -26,7 +26,7 @@ modules:
     install:
       packages:
         # Build essentials not already in base image
-        - gcc-c++
+        # - gcc-c++
         - clang
         - cmake
         - ninja-build
@@ -35,7 +35,7 @@ modules:
         - dtc
         - gperf
         - dfu-util
-        - python3-pip
+        # - python3-pip
         - python3-devel
         - arm-none-eabi-gcc
         - arm-none-eabi-newlib
