@@ -1,13 +1,13 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: template
+name: bazzite-dmhuisma
 # description will be included in the image's metadata
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/bazzite-dx
+image-version: 43 # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
@@ -18,28 +18,43 @@ modules:
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
 
   - type: dnf
-    repos:
-      copr:
-        - atim/starship
     install:
       packages:
         - micro
-        - starship
-    remove:
-      packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
 
-  - type: default-flatpaks
-    configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+  - type: dnf
+    install:
+      packages:
+        # Build essentials not already in base image
+        - gcc-c++
+        - clang
+        - cmake
+        - ninja-build
+        - gtk3-devel
+        # Zephyr / embedded firmware build dependencies
+        - dtc
+        - gperf
+        - dfu-util
+        - python3-pip
+        - python3-devel
+        - arm-none-eabi-gcc
+        - arm-none-eabi-newlib
+        - systemd-devel
+        - SDL2-devel
+        - glibc-devel.i686
+        # USB access for programmers and debuggers (JLink, nRF, OpenOCD)
+        # libusb1-devel is the libusb 1.0 dev package in Fedora (libusb-devel does not exist)
+        - libusb1-devel
+        - libusb-compat-0.1
+        # OpenOCD for JTAG/SWD debugging (complement to JLink)
+        - openocd
+        # Other
+        - python-tkinter
+
+  - type: script
+    scripts:
+      - install-zephyr-sdk.sh
+      - install-nrfutil.sh
+      - install-jlink.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
