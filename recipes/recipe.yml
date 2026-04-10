@@ -40,8 +40,6 @@ modules:
         - arm-none-eabi-gcc
         - arm-none-eabi-newlib
         - systemd-devel
-        - mesa-libGLU-devel
-        - SDL2-devel
         - glibc-devel.i686
         # USB access for programmers and debuggers (JLink, nRF, OpenOCD)
         # libusb1-devel is the libusb 1.0 dev package in Fedora (libusb-devel does not exist)
