@@ -3,7 +3,7 @@ set -euo pipefail
 
 ZEPHYR_SDK_VERSION="0.17.0"
 
-ZEPHYR_SDK_DIR="/opt/zephyr-sdk"
+ZEPHYR_SDK_DIR="/opt/zephyr-sdk-${ZEPHYR_SDK_VERSION}"
 ZEPHYR_BASE_URL="https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v${ZEPHYR_SDK_VERSION}"
 
 echo "==> Installing Zephyr SDK ${ZEPHYR_SDK_VERSION}..."
@@ -26,7 +26,7 @@ rm -f /tmp/zephyr-sdk-minimal.tar.xz /tmp/zephyr-toolchain-arm.tar.xz
 echo "==> Installing west and Python build tools..."
 pip3 install --break-system-packages west pyelftools
 
-cat > /etc/profile.d/zephyr-sdk.sh << 'EOF'
-export ZEPHYR_SDK_INSTALL_DIR="/opt/zephyr-sdk"
-export PATH="/opt/zephyr-sdk/arm-zephyr-eabi/bin:${PATH}"
-EOF
+# cat > /etc/profile.d/zephyr-sdk.sh << 'EOF'
+# export ZEPHYR_SDK_INSTALL_DIR="/opt/zephyr-sdk"
+# export PATH="${ZEPHYR_SDK_DIR}/arm-zephyr-eabi/bin:${PATH}"
+# EOF

@@ -23,8 +23,12 @@ modules:
         - micro
 
   - type: dnf
+    repos:
+      copr:
+        - scottames/ghostty
     install:
       packages:
+        - ghostty
         # Build essentials not already in base image
         # - gcc-c++
         - clang
@@ -37,8 +41,6 @@ modules:
         - dfu-util
         # - python3-pip
         - python3-devel
-        - arm-none-eabi-gcc
-        - arm-none-eabi-newlib
         - systemd-devel
         - glibc-devel.i686
         # USB access for programmers and debuggers (JLink, nRF, OpenOCD)
@@ -52,7 +54,9 @@ modules:
 
   - type: script
     scripts:
-      - install-zephyr-sdk.sh
+      - install-arm-toolchain.sh
+      - install-zephyr-sdk-17.0.sh
+      - install-zephyr-sdk-1.0.1.sh
       - install-nrfutil.sh
       - install-jlink.sh
 
