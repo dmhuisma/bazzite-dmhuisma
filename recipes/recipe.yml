@@ -51,6 +51,8 @@ modules:
         - openocd
         # Other
         - python-tkinter
+        # VS Code (repo provided via files/system/etc/yum.repos.d/vscode.repo)
+        - code
 
   - type: script
     scripts:
