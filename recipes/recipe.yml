@@ -53,6 +53,25 @@ modules:
         - python-tkinter
         # VS Code (repo provided via files/system/etc/yum.repos.d/vscode.repo)
         - code
+        # Docker CE (repo provided via files/system/etc/yum.repos.d/docker-ce.repo)
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+  - type: systemd
+    system:
+      enabled:
+        - docker.socket
+        - docker.service
+      masked:
+        - podman.socket
+        - podman.service
+    user:
+      masked:
+        - podman.socket
+        - podman.service
 
   - type: script
     scripts:
