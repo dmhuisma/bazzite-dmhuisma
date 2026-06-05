@@ -1,6 +1,6 @@
 # Bazzite-Dmhuisma
 
-My own Bazzite DX image that just contains a few extra things I use.
+My own Bazzite image that just contains a few extra things I use. I used to use Bazzite-DX but after its delayed update to 44 I decided to rebase on non-DX and include the dev dependencies here.
 
 ## Installation
 

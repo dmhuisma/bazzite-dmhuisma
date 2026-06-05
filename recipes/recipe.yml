@@ -6,8 +6,8 @@ name: bazzite-dmhuisma
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/bazzite-dx
-image-version: 43 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/bazzite
+image-version: stable-44 # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
@@ -51,6 +51,27 @@ modules:
         - openocd
         # Other
         - python-tkinter
+        # VS Code (repo provided via files/system/etc/yum.repos.d/vscode.repo)
+        - code
+        # Docker CE (repo provided via files/system/etc/yum.repos.d/docker-ce.repo)
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+
+  - type: systemd
+    system:
+      enabled:
+        - docker.socket
+        - docker.service
+      masked:
+        - podman.socket
+        - podman.service
+    user:
+      masked:
+        - podman.socket
+        - podman.service
 
   - type: script
     scripts:
