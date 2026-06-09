@@ -31,6 +31,26 @@ find_wineasio_64() {
     return 1
 }
 
+write_pipewire_defaults() {
+    local reg_file=""
+
+    reg_file="$(mktemp --suffix=.reg)"
+    cat > "${reg_file}" <<'EOF'
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Wine\WineASIO]
+"Autostart server"=dword:00000000
+"Connect to hardware"=dword:00000000
+"Fixed buffersize"=dword:00000001
+"Number of inputs"=dword:00000002
+"Number of outputs"=dword:00000002
+"Preferred buffersize"=dword:00000080
+EOF
+
+    env WINEPREFIX="${prefix}" wine64 regedit "${reg_file}"
+    rm -f "${reg_file}"
+}
+
 if ! command -v wine64 >/dev/null 2>&1; then
     echo "ERROR: wine64 is not installed." >&2
     exit 1
@@ -56,4 +76,6 @@ echo "==> Registering WineASIO in ${prefix}"
 install -d "${prefix}/drive_c/windows/system32"
 cp -v "${wineasio_paths[1]}" "${prefix}/drive_c/windows/system32/"
 env WINEPREFIX="${prefix}" wine64 regsvr32 "${wineasio_paths[0]}"
+write_pipewire_defaults
 echo "==> WineASIO registration complete for ${prefix}"
+echo "==> PipeWire-friendly WineASIO defaults: 2 inputs, 2 outputs, 128 preferred buffer, hardware autoconnect disabled"

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    cat >&2 <<'EOF'
+Usage:
+  wineasio-run WINEPREFIX COMMAND [ARG...]
+  wineasio-run WINEPREFIX /path/to/app.exe [ARG...]
+
+Examples:
+  wineasio-run "$HOME/.wine-neural" "$HOME/.wine-neural/drive_c/Program Files/Neural DSP/Archetype Nolly X/Archetype Nolly X.exe"
+  wineasio-run "$HOME/.wine-neural" wine "C:\\Program Files\\Neural DSP\\Archetype Nolly X\\Archetype Nolly X.exe"
+EOF
+}
+
+if [[ "$#" -lt 2 || -z "${1:-}" ]]; then
+    usage
+    exit 2
+fi
+
+prefix="$1"
+shift
+
+case "${prefix}" in
+    "~")
+        prefix="${HOME}"
+        ;;
+    "~/"*)
+        prefix="${HOME}/${prefix#"~/"}"
+        ;;
+esac
+
+if [[ ! -d "${prefix}/drive_c/windows" ]]; then
+    echo "ERROR: ${prefix} does not look like an initialized Wine prefix." >&2
+    echo "Run wineasio-register-prefix '${prefix}' first." >&2
+    exit 1
+fi
+
+first_arg="$1"
+if [[ "${first_arg,,}" == *.exe ]]; then
+    set -- wine "$@"
+fi
+
+export WINEPREFIX="${prefix}"
+export PIPEWIRE_LATENCY="${PIPEWIRE_LATENCY:-128/48000}"
+export WINEASIO_AUTOSTART_SERVER="${WINEASIO_AUTOSTART_SERVER:-off}"
+export WINEASIO_CONNECT_TO_HARDWARE="${WINEASIO_CONNECT_TO_HARDWARE:-off}"
+export WINEASIO_FIXED_BUFFERSIZE="${WINEASIO_FIXED_BUFFERSIZE:-on}"
+export WINEASIO_NUMBER_INPUTS="${WINEASIO_NUMBER_INPUTS:-2}"
+export WINEASIO_NUMBER_OUTPUTS="${WINEASIO_NUMBER_OUTPUTS:-2}"
+export WINEASIO_PREFERRED_BUFFERSIZE="${WINEASIO_PREFERRED_BUFFERSIZE:-128}"
+
+exec pw-jack "$@"

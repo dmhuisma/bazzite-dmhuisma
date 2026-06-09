@@ -12,6 +12,9 @@ audio-setup:
 audio-wineasio-register prefix:
     wineasio-register-prefix "{{ prefix }}"
 
+audio-wineasio-run prefix command *args:
+    wineasio-run "{{ prefix }}" "{{ command }}" {{ args }}
+
 audio-buffer-64:
     pw-metadata -n settings 0 clock.force-quantum 64
     pw-metadata -n settings 0 clock.force-rate 48000

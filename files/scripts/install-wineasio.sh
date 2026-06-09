@@ -72,6 +72,7 @@ install -d \
 
 install -m 0644 "${SOURCE_DIR}/build64/wineasio64.dll" "${WINE64_WINDOWS_DIR}/wineasio64.dll"
 install -m 0644 "${SOURCE_DIR}/build64/wineasio64.dll.so" "${WINE64_UNIX_DIR}/wineasio64.dll.so"
+ln -sf wineasio64.dll.so "${WINE64_UNIX_DIR}/wineasio64.so"
 install -m 0755 "${SOURCE_DIR}/wineasio-register" /usr/bin/wineasio-register-upstream
 
 cat > /usr/bin/wineasio-register << 'EOF'
