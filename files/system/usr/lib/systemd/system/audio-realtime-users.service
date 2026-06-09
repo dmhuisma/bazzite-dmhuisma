@@ -1,0 +1,11 @@
+[Unit]
+Description=Add interactive users to realtime audio groups
+After=systemd-user-sessions.service
+ConditionPathExists=/etc/passwd
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/audio-realtime-users
+
+[Install]
+WantedBy=multi-user.target

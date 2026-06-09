@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=REAPER Low Latency
+Comment=REAPER with PipeWire JACK at 128 samples
+Exec=/usr/bin/reaper-low-latency %F
+Icon=cockos-reaper
+Terminal=false
+Categories=AudioVideo;Audio;AudioVideoEditing;Recorder;
+MimeType=application/x-reaper-project;application/x-reaper-project-backup;

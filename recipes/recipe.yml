@@ -23,6 +23,40 @@ modules:
         - micro
 
   - type: dnf
+    install:
+      packages:
+        # PipeWire/JACK realtime audio stack
+        - pipewire-jack-audio-connection-kit
+        - pipewire-utils
+        - rtkit
+        - realtime-setup
+        - tuned
+        - tuned-profiles-realtime
+        - tuna
+        # Audio device, routing, and plugin tooling
+        - alsa-utils
+        - alsa-tools
+        - pavucontrol
+        - qpwgraph
+        - qjackctl
+        - Carla
+        - guitarix
+        - lv2-guitarix-plugins
+        - lsp-plugins-lv2
+        - lv2-zam-plugins
+        - lv2-x42-plugins
+        - lv2-calf-plugins
+        # Windows VST support for yabridge
+        - wine
+        - winetricks
+        - wine-mono
+        - cabextract
+        - unzip
+        - p7zip
+        - p7zip-plugins
+        - ntsync-autoload
+
+  - type: dnf
     repos:
       copr:
         - scottames/ghostty
@@ -65,6 +99,9 @@ modules:
       enabled:
         - docker.socket
         - docker.service
+        - realtime-setup.service
+        - realtime-entsk.service
+        - audio-realtime-users.service
       masked:
         - podman.socket
         - podman.service
@@ -80,5 +117,10 @@ modules:
       - install-zephyr-sdk-1.0.1.sh
       - install-nrfutil.sh
       - install-jlink.sh
+      - install-reaper.sh
+      - install-yabridge.sh
+
+  - type: justfiles
+    validate: true
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
