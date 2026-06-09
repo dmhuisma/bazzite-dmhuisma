@@ -80,10 +80,10 @@ modules:
         - python3-devel
         - systemd-devel
         - glibc-devel.i686
-        # Zephyr native_sim SDL display/input support. SDL2-devel is extracted
-        # later to avoid pulling Fedora Mesa devel packages over Bazzite Mesa.
-        - SDL2
-        - SDL2.i686
+        # Zephyr native_sim SDL display/input support. sdl2-compat-devel is
+        # extracted later to avoid Fedora Mesa devel packages on Bazzite Mesa.
+        - sdl2-compat
+        - sdl2-compat.i686
         - cpio
         - pkgconf-pkg-config
         # USB access for programmers and debuggers (JLink, nRF, OpenOCD)
