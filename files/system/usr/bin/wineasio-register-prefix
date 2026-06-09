@@ -44,7 +44,7 @@ REGEDIT4
 "Fixed buffersize"=dword:00000001
 "Number of inputs"=dword:00000002
 "Number of outputs"=dword:00000002
-"Preferred buffersize"=dword:00000080
+"Preferred buffersize"=dword:00000100
 EOF
 
     env WINEPREFIX="${prefix}" wine64 regedit "${reg_file}"
@@ -78,4 +78,4 @@ cp -v "${wineasio_paths[1]}" "${prefix}/drive_c/windows/system32/"
 env WINEPREFIX="${prefix}" wine64 regsvr32 "${wineasio_paths[0]}"
 write_pipewire_defaults
 echo "==> WineASIO registration complete for ${prefix}"
-echo "==> PipeWire-friendly WineASIO defaults: 2 inputs, 2 outputs, 128 preferred buffer, hardware autoconnect disabled"
+echo "==> PipeWire-friendly WineASIO defaults: 2 inputs, 2 outputs, 256 preferred buffer, hardware autoconnect disabled"

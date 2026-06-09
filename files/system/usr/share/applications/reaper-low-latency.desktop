@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=REAPER Low Latency
-Comment=REAPER with PipeWire JACK requesting 128-sample latency
+Comment=REAPER with PipeWire JACK requesting 256-sample latency
 Exec=/usr/bin/reaper-low-latency %F
 Icon=cockos-reaper
 Terminal=false
