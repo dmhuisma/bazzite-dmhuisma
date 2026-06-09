@@ -80,6 +80,12 @@ modules:
         - python3-devel
         - systemd-devel
         - glibc-devel.i686
+        # Zephyr native_sim SDL display/input support. sdl2-compat-devel is
+        # extracted later to avoid Fedora Mesa devel packages on Bazzite Mesa.
+        - sdl2-compat
+        - sdl2-compat.i686
+        - cpio
+        - pkgconf-pkg-config
         # USB access for programmers and debuggers (JLink, nRF, OpenOCD)
         # libusb1-devel is the libusb 1.0 dev package in Fedora (libusb-devel does not exist)
         - libusb1-devel
@@ -118,6 +124,7 @@ modules:
       - install-arm-toolchain.sh
       - install-zephyr-sdk-17.0.sh
       - install-zephyr-sdk-1.0.1.sh
+      - install-sdl2-devel-files.sh
       - install-nrfutil.sh
       - install-jlink.sh
       - install-reaper.sh
