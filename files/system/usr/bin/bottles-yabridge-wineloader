@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+YQ="$(command -v yq || true)"
+if [[ -z "${YQ}" ]]; then
+    echo "Error: yq is not installed." >&2
+    exit 1
+fi
+
+SYSTEM_WINE="$(command -v wine || true)"
+
+run_wine() {
+    local wine_bin="$1"
+    shift
+
+    if [[ "${BOTTLES_YABRIDGE_WINELOADER_PRINT:-}" == "1" ]]; then
+        printf '%s\n' "${wine_bin}"
+        exit 0
+    fi
+
+    exec "${wine_bin}" "$@"
+}
+
+call_system_wine() {
+    if [[ -n "${SYSTEM_WINE}" ]]; then
+        run_wine "${SYSTEM_WINE}" "$@"
+    else
+        echo "Error: system wine is not installed." >&2
+        exit 1
+    fi
+}
+
+resolve_custom_bottles_root() {
+    "${YQ}" -r '.custom_bottles_path // ""' "$1" 2>/dev/null || echo ""
+}
+
+bottle_path_exists() {
+    [[ -n "$1" && -d "${1}/${2}" ]]
+}
+
+run_bottles_wine() {
+    local bottles_root="$1"
+    local runner="$2"
+    local runner_path="$3"
+    local candidate=""
+    shift 3
+
+    if [[ -n "${runner_path}" && "${runner_path}" != "null" ]]; then
+        for candidate in \
+            "${runner_path}/bin/wine" \
+            "${runner_path}/files/bin/wine"; do
+            if [[ -x "${candidate}" ]]; then
+                run_wine "${candidate}" "$@"
+            fi
+        done
+    fi
+
+    for candidate in \
+        "${bottles_root}/runners/${runner}/bin/wine" \
+        "${bottles_root}/runners/${runner}/files/bin/wine"; do
+        if [[ -x "${candidate}" ]]; then
+            run_wine "${candidate}" "$@"
+        fi
+    done
+
+    echo "Error: Bottles runner '${runner}' was not found under '${bottles_root}/runners'." >&2
+    exit 1
+}
+
+if [[ -n "${WINEPREFIX:-}" && -e "${WINEPREFIX}/bottle.yml" ]]; then
+    RUNNER="$("${YQ}" -r '.Runner' "${WINEPREFIX}/bottle.yml")"
+    RUNNER_PATH="$("${YQ}" -r '.RunnerPath // ""' "${WINEPREFIX}/bottle.yml")"
+    BOTTLE_PATH="$("${YQ}" -r '.Path' "${WINEPREFIX}/bottle.yml")"
+    BOTTLE_PATH="$(basename "${BOTTLE_PATH}")"
+
+    if [[ -e "${HOME}/.var/app/com.usebottles.bottles/data/bottles/data.yml" ]]; then
+        IS_FLATPAK=true
+        CUSTOM_BOTTLES_PATH="$(resolve_custom_bottles_root "${HOME}/.var/app/com.usebottles.bottles/data/bottles/data.yml")"
+    elif [[ -e "${HOME}/.local/share/bottles/data.yml" ]]; then
+        IS_FLATPAK=false
+        CUSTOM_BOTTLES_PATH="$(resolve_custom_bottles_root "${HOME}/.local/share/bottles/data.yml")"
+    else
+        IS_FLATPAK=false
+        CUSTOM_BOTTLES_PATH=""
+    fi
+
+    if [[ "${IS_FLATPAK}" == true ]] && bottle_path_exists "${CUSTOM_BOTTLES_PATH}" "${BOTTLE_PATH}"; then
+        BOTTLES_ROOT="${HOME}/.var/app/com.usebottles.bottles/data/bottles"
+    elif [[ "${IS_FLATPAK}" == false ]] && bottle_path_exists "${CUSTOM_BOTTLES_PATH}" "${BOTTLE_PATH}"; then
+        BOTTLES_ROOT="${HOME}/.local/share/bottles"
+    elif bottle_path_exists "${HOME}/.var/app/com.usebottles.bottles/data/bottles/bottles" "${BOTTLE_PATH}"; then
+        BOTTLES_ROOT="${HOME}/.var/app/com.usebottles.bottles/data/bottles"
+    elif bottle_path_exists "${HOME}/.local/share/bottles/bottles" "${BOTTLE_PATH}"; then
+        BOTTLES_ROOT="${HOME}/.local/share/bottles"
+    else
+        echo "Error: BOTTLES_ROOT not found." >&2
+        exit 1
+    fi
+
+    if [[ -z "${RUNNER}" || "${RUNNER}" == "null" || "${RUNNER}" == sys-* ]]; then
+        call_system_wine "$@"
+    else
+        run_bottles_wine "${BOTTLES_ROOT}" "${RUNNER}" "${RUNNER_PATH}" "$@"
+    fi
+else
+    call_system_wine "$@"
+fi
