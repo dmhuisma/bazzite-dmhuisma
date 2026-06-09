@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for group_name in realtime audio; do
+    getent group "${group_name}" >/dev/null || groupadd --system "${group_name}"
+done
+
+while IFS=: read -r user_name _ uid _ _ home_dir shell_path; do
+    if [[ "${uid}" -lt 1000 || "${uid}" -ge 60000 ]]; then
+        continue
+    fi
+
+    if [[ "${shell_path}" == "/sbin/nologin" || "${shell_path}" == "/usr/sbin/nologin" || "${shell_path}" == "/bin/false" ]]; then
+        continue
+    fi
+
+    if [[ ! -d "${home_dir}" ]]; then
+        continue
+    fi
+
+    usermod -aG realtime,audio "${user_name}"
+done < /etc/passwd

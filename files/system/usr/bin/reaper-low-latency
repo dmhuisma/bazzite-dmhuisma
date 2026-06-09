@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PIPEWIRE_QUANTUM="${PIPEWIRE_QUANTUM:-128/48000}"
+exec pw-jack /usr/bin/reaper "$@"
