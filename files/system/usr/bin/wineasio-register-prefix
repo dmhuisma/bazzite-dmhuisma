@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "$#" -ne 1 || -z "${1:-}" ]]; then
+    echo "Usage: wineasio-register-prefix WINEPREFIX" >&2
+    exit 2
+fi
+
+prefix="$1"
+case "${prefix}" in
+    "~")
+        prefix="${HOME}"
+        ;;
+    "~/"*)
+        prefix="${HOME}/${prefix#"~/"}"
+        ;;
+esac
+
+find_wineasio_64() {
+    local unix_dll=""
+    local windows_dll=""
+
+    while IFS= read -r unix_dll; do
+        windows_dll="${unix_dll%/x86_64-unix/wineasio64.dll.so}/x86_64-windows/wineasio64.dll"
+        if [[ -e "${unix_dll}" && -e "${windows_dll}" ]]; then
+            printf '%s\n%s\n' "${unix_dll}" "${windows_dll}"
+            return 0
+        fi
+    done < <(find /usr/lib64 /usr/lib /opt -path '*/wine/x86_64-unix/wineasio64.dll.so' -print 2>/dev/null || true)
+
+    return 1
+}
+
+if ! command -v wine64 >/dev/null 2>&1; then
+    echo "ERROR: wine64 is not installed." >&2
+    exit 1
+fi
+
+if [[ ! -d "${prefix}/drive_c/windows" ]]; then
+    env WINEPREFIX="${prefix}" wineboot -u
+fi
+
+if [[ ! -d "${prefix}/drive_c/windows/syswow64" ]]; then
+    echo "ERROR: ${prefix} does not look like a 64-bit Wine prefix." >&2
+    echo "WineASIO in this image is installed for 64-bit Windows audio applications." >&2
+    exit 1
+fi
+
+mapfile -t wineasio_paths < <(find_wineasio_64)
+if [[ "${#wineasio_paths[@]}" -ne 2 ]]; then
+    echo "ERROR: Could not find installed WineASIO 64-bit DLLs." >&2
+    exit 1
+fi
+
+echo "==> Registering WineASIO in ${prefix}"
+install -d "${prefix}/drive_c/windows/system32"
+cp -v "${wineasio_paths[1]}" "${prefix}/drive_c/windows/system32/"
+env WINEPREFIX="${prefix}" wine64 regsvr32 "${wineasio_paths[0]}"
+echo "==> WineASIO registration complete for ${prefix}"

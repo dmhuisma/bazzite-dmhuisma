@@ -47,7 +47,10 @@ modules:
         - lv2-x42-plugins
         - lv2-calf-plugins
         # Windows VST support for yabridge
+        - gcc
+        - make
         - wine
+        - wine-devel
         - winetricks
         - wine-mono
         - cabextract
@@ -119,6 +122,7 @@ modules:
       - install-jlink.sh
       - install-reaper.sh
       - install-yabridge.sh
+      - install-wineasio.sh
 
   - type: justfiles
     validate: true

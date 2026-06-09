@@ -9,6 +9,9 @@ audio-setup:
     yabridgectl add "$HOME/.wine/drive_c/Program Files/Steinberg/VstPlugins" || true
     yabridgectl sync
 
+audio-wineasio-register prefix:
+    wineasio-register-prefix "{{ prefix }}"
+
 audio-buffer-64:
     pw-metadata -n settings 0 clock.force-quantum 64
     pw-metadata -n settings 0 clock.force-rate 48000
