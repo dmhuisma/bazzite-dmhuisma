@@ -18,10 +18,15 @@ wget -q "${ZEPHYR_BASE_URL}/toolchain_linux-x86_64_arm-zephyr-eabi.tar.xz" \
     -O /tmp/zephyr-toolchain-arm.tar.xz
 tar -xJf /tmp/zephyr-toolchain-arm.tar.xz -C "${ZEPHYR_SDK_DIR}"
 
+# ESP32 Xtensa toolchain for Zephyr `esp32` board targets
+wget -q "${ZEPHYR_BASE_URL}/toolchain_linux-x86_64_xtensa-espressif_esp32_zephyr-elf.tar.xz" \
+    -O /tmp/zephyr-toolchain-xtensa-esp32.tar.xz
+tar -xJf /tmp/zephyr-toolchain-xtensa-esp32.tar.xz -C "${ZEPHYR_SDK_DIR}"
+
 # Register Zephyr SDK CMake packages (required for west build to find the SDK)
 "${ZEPHYR_SDK_DIR}/setup.sh" -c
 
-rm -f /tmp/zephyr-sdk-minimal.tar.xz /tmp/zephyr-toolchain-arm.tar.xz
+rm -f /tmp/zephyr-sdk-minimal.tar.xz /tmp/zephyr-toolchain-arm.tar.xz /tmp/zephyr-toolchain-xtensa-esp32.tar.xz
 
 echo "==> Installing west and Python build tools..."
 pip3 install --break-system-packages west pyelftools
