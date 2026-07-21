@@ -133,6 +133,15 @@ modules:
       - install-yabridge.sh
       - install-wineasio.sh
 
+  - type: dnf
+    repos:
+      copr:
+        - lionheartp/Hyprland
+    install:
+      packages:
+        - hyprland
+        - noctalia-hyprland-meta
+
   - type: justfiles
     validate: true
 
