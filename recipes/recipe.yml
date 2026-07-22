@@ -142,6 +142,7 @@ modules:
         - hyprland
         - noctalia-hyprland-meta
         - hyprpolkitagent
+        - hyprshot
 
   - type: justfiles
     validate: true
