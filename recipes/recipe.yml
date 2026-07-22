@@ -141,6 +141,9 @@ modules:
       packages:
         - hyprland
         - noctalia-hyprland-meta
+        - hyprpolkitagent
+        - qt5-wayland
+        - qt6-wayland
 
   - type: justfiles
     validate: true
