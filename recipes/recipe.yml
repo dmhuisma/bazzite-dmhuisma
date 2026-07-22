@@ -141,7 +141,6 @@ modules:
       packages:
         - hyprland
         - noctalia-hyprland-meta
-        - quickshell
 
   - type: justfiles
     validate: true
