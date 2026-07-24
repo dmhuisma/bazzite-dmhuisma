@@ -4,6 +4,7 @@ set -euo pipefail
 TOOLCHAIN_VERSION="15.3.rel1"
 ARCHIVE="arm-gnu-toolchain-${TOOLCHAIN_VERSION}-x86_64-arm-none-eabi.tar.xz"
 DOWNLOAD_URL="https://gitlab.arm.com/api/v4/projects/tooling%2Fgnu-toolchains-for-arm/packages/generic/gnu-toolchain/${TOOLCHAIN_VERSION}/${ARCHIVE}"
+INSTALL_DIR="/opt/arm-gnu-toolchain"
 
 echo "==> Installing ARM GNU Toolchain ${TOOLCHAIN_VERSION}..."
 
