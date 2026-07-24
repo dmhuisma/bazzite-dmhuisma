@@ -127,39 +127,42 @@ modules:
       - install-zephyr-sdk-17.0.sh
       - install-zephyr-sdk-1.0.1.sh
       - install-sdl2-devel-files.sh
-      - install-mesa-libgbm-devel.sh
       - install-nrfutil.sh
       - install-jlink.sh
       - install-reaper.sh
       - install-yabridge.sh
       - install-wineasio.sh
 
+  # Enable the Hyprland COPR first. Repositories are retained unless
+  # cleanup: true is explicitly requested.
   - type: dnf
     repos:
       copr:
         - lionheartp/Hyprland
+
+  # Install packages that must match Bazzite's customized packages.
+  - type: script
+    scripts:
+      - install-bazzite-devel.sh
+
+  # Install the remaining ordinary Hyprland packages.
+  - type: dnf
     install:
       packages:
-        - hyprland
+        - noctalia-hyprland-meta
+        - hyprpolkitagent
+        - hyprshot
+        - hyprqt6engine
+
+  - type: dnf
+    install:
+      packages:
+        # install-bazzite-devel.sh includes hyprland and hyprland-devel
         - hyprland-devel
         - noctalia-hyprland-meta
         - hyprpolkitagent
         - hyprshot
-        - aquamarine
         - hyprqt6engine
-        - hyprwayland-scanner
-        - aquamarine-devel
-        # - hyprlang-devel
-        # - hyprcursor-devel
-        # - hyprgraphics-devel
-        # - hyprland-protocols-devel
-        # - hyprtoolkit-devel
-        # - hyprutils-devel
-        # - hyprwayland-scanner-devel
-        # - hyprwire-devel
-        # - hypre-devel
-        # - hypre-mpich-devel
-        # - hypre-openmpi-devel
 
   - type: justfiles
     validate: true
