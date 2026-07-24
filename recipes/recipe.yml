@@ -127,6 +127,7 @@ modules:
       - install-zephyr-sdk-17.0.sh
       - install-zephyr-sdk-1.0.1.sh
       - install-sdl2-devel-files.sh
+      - install-mesa-libgbm-devel.sh
       - install-nrfutil.sh
       - install-jlink.sh
       - install-reaper.sh
@@ -140,25 +141,25 @@ modules:
     install:
       packages:
         - hyprland
+        - hyprland-devel
         - noctalia-hyprland-meta
         - hyprpolkitagent
         - hyprshot
         - aquamarine
         - hyprqt6engine
         - hyprwayland-scanner
-        # devel
         - aquamarine-devel
-        - hyprlang-devel
-        - hyprcursor-devel
-        - hyprgraphics-devel
-        - hyprland-protocols-devel
-        - hyprtoolkit-devel
-        - hyprutils-devel
-        - hyprwayland-scanner-devel
-        - hyprwire-devel
-        - hypre-devel
-        - hypre-mpich-devel
-        - hypre-openmpi-devel
+        # - hyprlang-devel
+        # - hyprcursor-devel
+        # - hyprgraphics-devel
+        # - hyprland-protocols-devel
+        # - hyprtoolkit-devel
+        # - hyprutils-devel
+        # - hyprwayland-scanner-devel
+        # - hyprwire-devel
+        # - hypre-devel
+        # - hypre-mpich-devel
+        # - hypre-openmpi-devel
 
   - type: justfiles
     validate: true
