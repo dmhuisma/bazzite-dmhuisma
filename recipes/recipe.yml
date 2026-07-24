@@ -144,6 +144,7 @@ modules:
         - hyprpolkitagent
         - hyprshot
         - aquamarine
+        - aquamarine-devel
         - hyprqt6engine
         - hyprwayland-scanner
 
