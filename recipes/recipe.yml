@@ -144,9 +144,23 @@ modules:
         - hyprpolkitagent
         - hyprshot
         - aquamarine
-        - aquamarine-devel
         - hyprqt6engine
         - hyprwayland-scanner
+        # devel
+        - aquamarine-devel
+        - hyprlang-devel
+        - hyprcursor-devel
+        - hyprgraphics-devel
+        - hyprland-devel
+        - hyprland-git-devel
+        - hyprland-protocols-devel
+        - hyprtoolkit-devel
+        - hyprutils-devel
+        - hyprwayland-scanner-devel
+        - hyprwire-devel
+        - hypre-devel
+        - hypre-mpich-devel
+        - hypre-openmpi-devel
 
   - type: justfiles
     validate: true
