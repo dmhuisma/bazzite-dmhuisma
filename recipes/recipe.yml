@@ -143,6 +143,9 @@ modules:
         - noctalia-hyprland-meta
         - hyprpolkitagent
         - hyprshot
+        - aquamarine
+        - hyprqt6engine
+        - hyprwayland-scanner
 
   - type: justfiles
     validate: true
