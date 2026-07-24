@@ -151,7 +151,6 @@ modules:
         - hyprlang-devel
         - hyprcursor-devel
         - hyprgraphics-devel
-        - hyprland-devel
         - hyprland-protocols-devel
         - hyprtoolkit-devel
         - hyprutils-devel
