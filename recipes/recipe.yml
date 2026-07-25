@@ -163,6 +163,7 @@ modules:
         - hyprpolkitagent
         - hyprshot
         - hyprqt6engine
+        - playerctl
 
   - type: justfiles
     validate: true
