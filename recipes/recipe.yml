@@ -154,16 +154,10 @@ modules:
         - hyprshot
         - hyprqt6engine
 
-  - type: dnf
-    install:
-      packages:
-        # install-bazzite-devel.sh includes hyprland and hyprland-devel
-        - hyprland-devel
-        - noctalia-hyprland-meta
-        - hyprpolkitagent
-        - hyprshot
-        - hyprqt6engine
-        - playerctl
+  # swap to official fedora noctalia package
+  - type: script
+    snippets:
+      - dnf swap noctalia-git noctalia --refresh
 
   - type: justfiles
     validate: true
