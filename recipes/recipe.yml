@@ -154,10 +154,10 @@ modules:
         - hyprshot
         - hyprqt6engine
 
-  # swap to official fedora noctalia package
+  # update noctalia from testing repo
   - type: script
     snippets:
-      - dnf swap noctalia-git noctalia --refresh
+      - dnf -y upgrade --enablerepo=updates-testing noctalia
 
   - type: justfiles
     validate: true
