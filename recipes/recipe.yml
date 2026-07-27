@@ -153,6 +153,7 @@ modules:
         - hyprpolkitagent
         - hyprshot
         - hyprqt6engine
+        - playerctl
 
   # update noctalia from testing repo
   - type: script
