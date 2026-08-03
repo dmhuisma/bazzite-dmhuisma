@@ -156,9 +156,9 @@ modules:
         - playerctl
 
   # update noctalia from testing repo
-  - type: script
-    snippets:
-      - dnf -y upgrade --enablerepo=updates-testing noctalia
+  # - type: script
+  #   snippets:
+  #     - dnf -y upgrade --enablerepo=updates-testing noctalia
 
   - type: justfiles
     validate: true
