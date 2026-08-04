@@ -154,6 +154,7 @@ modules:
         - hyprshot
         - hyprqt6engine
         - playerctl
+        - udiskie
 
   # update noctalia from testing repo
   # - type: script
