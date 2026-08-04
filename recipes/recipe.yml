@@ -155,6 +155,8 @@ modules:
         - hyprqt6engine
         - playerctl
         - udiskie
+        - qt5ct
+        - qt6ct
 
   # update noctalia from testing repo
   # - type: script
