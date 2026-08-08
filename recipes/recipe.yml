@@ -162,6 +162,18 @@ modules:
   #   snippets:
   #     - dnf -y upgrade --enablerepo=updates-testing noctalia
 
+  # cosmic
+  - type: dnf
+    group-install:
+      with-optional: true
+      packages:
+        - cosmic-desktop-environment
+      exclude:
+      - fcitx
+      - openh264
+      - mozilla-openh264
+      - firefox
+
   - type: justfiles
     validate: true
 
