@@ -174,6 +174,15 @@ modules:
       - mozilla-openh264
       - firefox
 
+  # voxtype
+  - type: dnf
+    repos:
+      copr:
+        - scottames/voxtype
+    install:
+      packages:
+        - voxtype
+
   - type: justfiles
     validate: true
 
