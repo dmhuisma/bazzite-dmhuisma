@@ -59,6 +59,7 @@ modules:
         - p7zip
         - p7zip-plugins
         - ntsync-autoload
+        - flashrom
 
   - type: dnf
     repos:
