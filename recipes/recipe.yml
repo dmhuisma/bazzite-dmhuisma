@@ -105,6 +105,7 @@ modules:
         - docker-buildx-plugin
         - docker-compose-plugin
         - webkit2gtk4.1-devel
+        - fira-code-fonts
 
   - type: systemd
     system:
@@ -183,6 +184,16 @@ modules:
     install:
       packages:
         - voxtype
+
+  # packages from terra
+  - type: dnf
+    repos:
+      files:
+        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
+    install:
+      packages:
+        - terra-release
+        - zed
 
   - type: justfiles
     validate: true
