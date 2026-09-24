@@ -175,6 +175,9 @@ modules:
       - openh264
       - mozilla-openh264
       - firefox
+      # The multimedia comps group lists wireplumber by name, but Bazzite
+      # ships terra-wireplumber (which provides wireplumber) instead.
+      - wireplumber
 
   # voxtype
   - type: dnf
