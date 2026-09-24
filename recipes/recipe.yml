@@ -189,14 +189,9 @@ modules:
         - voxtype
 
   # packages from terra
-  - type: dnf
-    repos:
-      files:
-        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
-    install:
-      packages:
-        - terra-release
-        - zed
+  - type: script
+    snippets:
+      - dnf5 -y install --enablerepo=terra zed
 
     # GTK / GNOME system applications for the Hyprland session
   # (the KDE session keeps using Dolphin, Ark, etc.)
