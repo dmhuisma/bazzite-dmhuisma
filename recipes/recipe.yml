@@ -145,6 +145,7 @@ modules:
   # Install packages that must match Bazzite's customized packages.
   - type: script
     scripts:
+      - install-xwayland-compat.sh
       - install-bazzite-devel.sh
 
   # Install the remaining ordinary Hyprland packages.
