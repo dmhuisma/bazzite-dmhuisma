@@ -106,6 +106,7 @@ modules:
         - docker-compose-plugin
         - webkit2gtk4.1-devel
         - fira-code-fonts
+        - papirus-icon-theme
 
   - type: systemd
     system:
@@ -134,6 +135,7 @@ modules:
       - install-reaper.sh
       - install-yabridge.sh
       - install-wineasio.sh
+      - keychron-battery.sh
 
   # Enable the Hyprland COPR first. Repositories are retained unless
   # cleanup: true is explicitly requested.
@@ -200,6 +202,15 @@ modules:
     install:
       packages:
         - ccache
+
+  # nautilus-my-computer
+  - type: dnf
+    repos:
+      copr:
+        - yannmasoch/nautilus-my-computer
+    install:
+      packages:
+        - nautilus-my-computer
 
   - type: justfiles
     validate: true
