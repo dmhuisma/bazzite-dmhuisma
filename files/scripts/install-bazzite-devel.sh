@@ -9,23 +9,30 @@ SCRIPT_DIR="$(
 
 INSTALL_DEVEL="${SCRIPT_DIR}/install-devel.sh"
 
-# Development files matching Bazzite's custom Mesa.
+# Development files matching Bazzite's custom Mesa (terra-mesa).
 "${INSTALL_DEVEL}" \
     --repo terra-mesa \
     --pkg-config gbm \
-    mesa-libgbm-devel.x86_64
+    mesa-libgbm
 
-# Development files matching Bazzite's custom Xwayland.
+# Development files matching Bazzite's custom Xwayland (terra-extras, which
+# ships it as terra-xorg-x11-server-Xwayland; older images used the
+# bazzite-multilib COPR).
 "${INSTALL_DEVEL}" \
+    --repo terra-extras \
     --repo '*bazzite-multilib*' \
     --pkg-config xwayland \
-    xorg-x11-server-Xwayland-devel.x86_64
+    xorg-x11-server-Xwayland
 
 # Hyprland development package.
 #
 # The LionHeartP COPR must already have been enabled by an earlier
 # BlueBuild DNF module.
-"${INSTALL_DEVEL}" \
-    --repo 'copr:copr.fedorainfracloud.org:lionheartp:Hyprland' \
-    --pkg-config hyprland \
-    hyprland-devel.x86_64
+dnf5 -y install hyprland-devel.x86_64
+
+pkg-config --exists hyprland ||
+    {
+        pkg-config --print-errors --exists hyprland || true
+        exit 1
+    }
+printf 'pkg-config: hyprland %s\n' "$(pkg-config --modversion hyprland)"

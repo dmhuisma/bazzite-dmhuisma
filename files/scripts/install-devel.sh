@@ -2,12 +2,25 @@
 
 set -euo pipefail
 
-# this is needed due to Bazzite's package replacements
+# Bazzite replaces some Fedora packages with its own builds (e.g. Mesa from
+# terra-mesa, Xwayland from terra-extras) and version-locks them. Their -devel
+# packages must come from exactly the same build, so the -devel package is
+# derived from whatever is actually installed in the base image rather than
+# from a hard-coded package name or repository.
 
 usage() {
     cat <<'USAGE'
 Usage:
-  install-devel.sh [options] PACKAGE [PACKAGE ...]
+  install-devel.sh [options] RUNTIME [RUNTIME ...]
+
+RUNTIME is an installed package name or capability (e.g. mesa-libgbm or
+xorg-x11-server-Xwayland). The package providing it is looked up, and
+<name>-devel is installed at exactly the same version.
+
+If that exact build is no longer published (the repository moved on after the
+base image was built), every installed package built from the same source
+package is upgraded together to the newest build, its version locks are
+refreshed, and the matching -devel package is installed.
 
 Options:
   -r, --repo REPO_GLOB       Temporarily enable a repository; repeatable.
@@ -19,12 +32,12 @@ Examples:
   install-devel.sh \
       --repo terra-mesa \
       --pkg-config gbm \
-      mesa-libgbm-devel.x86_64
+      mesa-libgbm
 
   install-devel.sh \
-      --repo '*bazzite-multilib*' \
+      --repo terra-extras \
       --pkg-config xwayland \
-      xorg-x11-server-Xwayland-devel.x86_64
+      xorg-x11-server-Xwayland
 USAGE
 }
 
@@ -35,7 +48,7 @@ die() {
 
 repos=()
 pkg_config_modules=()
-packages=()
+runtimes=()
 
 while (($#)); do
     case "$1" in
@@ -58,7 +71,7 @@ while (($#)); do
 
         --)
             shift
-            packages+=("$@")
+            runtimes+=("$@")
             break
             ;;
 
@@ -67,13 +80,13 @@ while (($#)); do
             ;;
 
         *)
-            packages+=("$1")
+            runtimes+=("$1")
             shift
             ;;
     esac
 done
 
-((${#packages[@]} > 0)) || {
+((${#runtimes[@]} > 0)) || {
     usage >&2
     exit 2
 }
@@ -84,57 +97,111 @@ command -v dnf5 >/dev/null ||
 command -v pkg-config >/dev/null ||
     die "pkg-config is not installed"
 
+arch="$(rpm --eval '%{_arch}')"
+
 repo_args=()
 
 for repo in "${repos[@]}"; do
     repo_args+=("--enable-repo=${repo}")
 done
 
-echo "Available package candidates:"
+# Prints "NAME EPOCH:VERSION-RELEASE SOURCERPM" for the native-arch package
+# that provides the given capability.
+installed_provider() {
+    rpm -q --whatprovides "$1" \
+        --queryformat '%{name} %{epochnum}:%{version}-%{release} %{arch} %{sourcerpm}\n' \
+        2>/dev/null |
+        awk -v arch="$arch" '$3 == arch { print $1, $2, $4; exit }'
+}
 
-for package in "${packages[@]}"; do
-    candidates="$(
-        dnf5 -q "${repo_args[@]}" repoquery \
-            --available \
-            --queryformat '%{name}-%{evr}.%{arch} [%{repoid}]' \
-            "$package" 2>/dev/null || true
-    )"
+is_available() {
+    [[ -n "$(
+        dnf5 -q -y "${repo_args[@]}" repoquery --available "$1" 2>/dev/null || true
+    )" ]]
+}
 
-    if [[ -n "$candidates" ]]; then
-        while IFS= read -r candidate; do
-            printf '  %s\n' "$candidate"
-        done <<<"$candidates"
-    else
-        printf '  %s: no available candidate found\n' "$package"
+is_versionlocked() {
+    dnf5 -q versionlock list 2>/dev/null |
+        grep -Eq "^Package name: $1\$"
+}
+
+# Upgrades every installed package built from the given source RPM in one
+# transaction, keeping any version locks Bazzite placed on them.
+upgrade_family() {
+    local srpm="$1"
+    local family=()
+    local names=()
+    local locked=()
+    local name
+
+    mapfile -t family < <(
+        rpm -qa --queryformat '%{name}.%{arch} %{sourcerpm}\n' |
+            awk -v srpm="$srpm" '$2 == srpm { print $1 }' |
+            sort -u
+    )
+    mapfile -t names < <(printf '%s\n' "${family[@]%.*}" | sort -u)
+
+    for name in "${names[@]}"; do
+        if is_versionlocked "$name"; then
+            locked+=("$name")
+        fi
+    done
+
+    echo "Upgrading packages built from ${srpm}:"
+    printf '  %s\n' "${family[@]}"
+
+    if ((${#locked[@]} > 0)); then
+        dnf5 -y versionlock delete "${locked[@]}"
     fi
+
+    dnf5 -y "${repo_args[@]}" upgrade "${family[@]}"
+
+    if ((${#locked[@]} > 0)); then
+        dnf5 -y versionlock add "${locked[@]}"
+    fi
+}
+
+devel_packages=()
+
+for runtime in "${runtimes[@]}"; do
+    read -r name evr srpm < <(installed_provider "$runtime") ||
+        die "no installed ${arch} package provides: ${runtime}"
+
+    devel="${name}-devel-${evr}.${arch}"
+    echo "${runtime} is provided by ${name}-${evr}.${arch}"
+
+    if ! is_available "$devel"; then
+        echo "${devel} is no longer published; resyncing with the newest build."
+        upgrade_family "$srpm"
+
+        read -r name evr srpm < <(installed_provider "$runtime") ||
+            die "no installed ${arch} package provides: ${runtime}"
+
+        devel="${name}-devel-${evr}.${arch}"
+        is_available "$devel" ||
+            die "no matching development package available: ${devel}"
+    fi
+
+    devel_packages+=("$devel")
 done
 
 echo
 echo "Installing:"
-printf '  %s\n' "${packages[@]}"
+printf '  %s\n' "${devel_packages[@]}"
 
 dnf5 -y \
     "${repo_args[@]}" \
     install \
-    "${packages[@]}"
+    "${devel_packages[@]}"
 
 echo
 echo "Installed packages:"
 
-for package in "${packages[@]}"; do
-    installed="$(
-        dnf5 -q repoquery \
-            --installed \
-            --queryformat '%{name}-%{evr}.%{arch}' \
-            "$package" 2>/dev/null || true
-    )"
-
-    [[ -n "$installed" ]] ||
+for package in "${devel_packages[@]}"; do
+    rpm -q "$package" >/dev/null ||
         die "could not verify installed package: $package"
 
-    while IFS= read -r match; do
-        printf '  %s\n' "$match"
-    done <<<"$installed"
+    printf '  %s\n' "$package"
 done
 
 if ((${#pkg_config_modules[@]} > 0)); then

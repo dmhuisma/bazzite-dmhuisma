@@ -147,6 +147,7 @@ modules:
   # Install packages that must match Bazzite's customized packages.
   - type: script
     scripts:
+      - install-xwayland-compat.sh
       - install-bazzite-devel.sh
 
   # Install the remaining ordinary Hyprland packages.
@@ -166,17 +167,20 @@ modules:
   #   snippets:
   #     - dnf -y upgrade --enablerepo=updates-testing noctalia
 
-  # cosmic
-  - type: dnf
-    group-install:
-      with-optional: true
-      packages:
-        - cosmic-desktop-environment
-      exclude:
-      - fcitx
-      - openh264
-      - mozilla-openh264
-      - firefox
+  # # cosmic
+  # - type: dnf
+  #   group-install:
+  #     with-optional: true
+  #     packages:
+  #       - cosmic-desktop-environment
+  #     exclude:
+  #     - fcitx
+  #     - openh264
+  #     - mozilla-openh264
+  #     - firefox
+  #     # The multimedia comps group lists wireplumber by name, but Bazzite
+  #     # ships terra-wireplumber (which provides wireplumber) instead.
+  #     - wireplumber
 
   # voxtype
   - type: dnf
@@ -188,14 +192,42 @@ modules:
         - voxtype
 
   # packages from terra
+  - type: script
+    snippets:
+      - dnf5 -y install --enablerepo=terra zed
+
+    # GTK / GNOME system applications for the Hyprland session
+  # (the KDE session keeps using Dolphin, Ark, etc.)
   - type: dnf
-    repos:
-      files:
-        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
     install:
       packages:
-        - terra-release
-        - zed
+        # File chooser portal (GTK file picker). Point Hyprland at it with
+        # ~/.config/xdg-desktop-portal/hyprland-portals.conf:
+        #   [preferred]
+        #   default=hyprland;gtk
+        #   org.freedesktop.impl.portal.FileChooser=gtk
+        - xdg-desktop-portal-gtk
+        # File management
+        - nautilus
+        - nautilus-extensions
+        - file-roller          # archive manager (integrates with nautilus)
+        - gvfs-mtp             # phones / MTP devices in nautilus
+        - gvfs-smb             # SMB network shares in nautilus
+        - gvfs-archive         # browse archives as folders
+        - gvfs-gphoto2         # cameras
+        # Viewers / utilities
+        - loupe                # image viewer
+        - papers               # document / PDF viewer
+        - gnome-text-editor
+        - gnome-calculator
+        - gnome-disk-utility
+        - baobab               # disk usage analyzer
+        - gnome-system-monitor
+        - gnome-font-viewer
+        - gnome-characters
+        # GTK theming outside of GNOME
+        - adw-gtk3-theme
+        - nwg-look
 
   # other packages
   - type: dnf
