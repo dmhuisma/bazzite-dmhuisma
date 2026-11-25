@@ -8,7 +8,7 @@ set -oue pipefail
 # write to the read-only /usr on an image-based system, so build it here.
 # Autoloads via its HID modalias when a supported mouse is connected.
 
-KEYCHRON_BATTERY_VERSION="v0.1.2"
+KEYCHRON_BATTERY_VERSION="v0.1.3"
 
 KERNEL="$(rpm -q "${KERNEL_NAME:-kernel}" --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 

@@ -135,7 +135,7 @@ modules:
       - install-reaper.sh
       - install-yabridge.sh
       - install-wineasio.sh
-      - keychron-battery.sh
+      - install-keychron-battery.sh
 
   # Enable the Hyprland COPR first. Repositories are retained unless
   # cleanup: true is explicitly requested.
