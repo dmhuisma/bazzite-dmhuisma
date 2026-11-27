@@ -235,14 +235,16 @@ modules:
       packages:
         - ccache
 
-  # nautilus-my-computer
+  # nautilus extensions
   - type: dnf
     repos:
       copr:
         - yannmasoch/nautilus-my-computer
+        - xariann/tools
     install:
       packages:
         - nautilus-my-computer
+        - nautilus-copy-path
 
   - type: justfiles
     validate: true
